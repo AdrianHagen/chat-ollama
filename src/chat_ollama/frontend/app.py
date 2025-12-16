@@ -1,11 +1,8 @@
 import streamlit as st
 import ollama
-from ollama_utils import chat_model
+from chat_ollama.ollama_utils import chat_model
+from chat_ollama.constants import *
 
-START_MESSAGES = [{
-    "role": "system", "content": "You are a helpful assistant. Keep your responses concise."
-}]
-DEFAULT_MODEL = "gemma3:12b"
 if "messages" not in st.session_state:
     st.session_state["messages"] = START_MESSAGES
 if "model" not in st.session_state:

@@ -10,4 +10,4 @@ run:
     else
         echo "Ollama already running"
     fi
-    uv run streamlit run src/app.py
+    uv run streamlit run src/chat_ollama/frontend/app.py
