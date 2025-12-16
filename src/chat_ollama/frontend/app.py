@@ -82,22 +82,38 @@ with st.sidebar:
             if st.session_state["current_chat_id"] == chat["id"]:
                 button_label = f"🔵 {button_label}"
             
-            if st.button(button_label, key=f"chat_{chat['id']}", use_container_width=True):
-                # Load the selected chat
-                st.session_state["current_chat_id"] = chat["id"]
-                st.session_state["model"] = chat["model"]
-                
-                # Load messages from database
-                messages_from_db = get_messages(chat["id"])
-                
-                # Reconstruct messages list with system message
-                st.session_state["messages"] = START_MESSAGES.copy()
-                for msg in messages_from_db:
-                    st.session_state["messages"].append({
-                        "role": msg["role"],
-                        "content": msg["content"]
-                    })
-                
-                st.rerun()
+            # Create columns for chat button and delete button
+            col1, col2 = st.columns([4, 1])
+            
+            with col1:
+                if st.button(button_label, key=f"chat_{chat['id']}", use_container_width=True):
+                    # Load the selected chat
+                    st.session_state["current_chat_id"] = chat["id"]
+                    st.session_state["model"] = chat["model"]
+                    
+                    # Load messages from database
+                    messages_from_db = get_messages(chat["id"])
+                    
+                    # Reconstruct messages list with system message
+                    st.session_state["messages"] = START_MESSAGES.copy()
+                    for msg in messages_from_db:
+                        st.session_state["messages"].append({
+                            "role": msg["role"],
+                            "content": msg["content"]
+                        })
+                    
+                    st.rerun()
+            
+            with col2:
+                if st.button("🗑️", key=f"delete_{chat['id']}", use_container_width=True):
+                    # Delete the chat from database
+                    delete_chat(chat["id"])
+                    
+                    # If we deleted the current chat, reset the session
+                    if st.session_state["current_chat_id"] == chat["id"]:
+                        st.session_state["messages"] = START_MESSAGES
+                        st.session_state["current_chat_id"] = None
+                    
+                    st.rerun()
     else:
         st.write("*No saved chats yet*")
